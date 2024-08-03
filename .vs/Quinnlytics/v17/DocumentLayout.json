@@ -1,0 +1,105 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "F:\\Projects\\Quinnlytics\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{BFA2B1BC-DA11-4C64-BB5A-46AB1CA955DA}|Quinnlytics.csproj|f:\\projects\\quinnlytics\\services\\riotapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BFA2B1BC-DA11-4C64-BB5A-46AB1CA955DA}|Quinnlytics.csproj|solutionrelative:services\\riotapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BFA2B1BC-DA11-4C64-BB5A-46AB1CA955DA}|Quinnlytics.csproj|f:\\projects\\quinnlytics\\services\\databaseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BFA2B1BC-DA11-4C64-BB5A-46AB1CA955DA}|Quinnlytics.csproj|solutionrelative:services\\databaseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BFA2B1BC-DA11-4C64-BB5A-46AB1CA955DA}|Quinnlytics.csproj|f:\\projects\\quinnlytics\\services\\idatabaseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BFA2B1BC-DA11-4C64-BB5A-46AB1CA955DA}|Quinnlytics.csproj|solutionrelative:services\\idatabaseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BFA2B1BC-DA11-4C64-BB5A-46AB1CA955DA}|Quinnlytics.csproj|f:\\projects\\quinnlytics\\services\\iriotapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BFA2B1BC-DA11-4C64-BB5A-46AB1CA955DA}|Quinnlytics.csproj|solutionrelative:services\\iriotapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BFA2B1BC-DA11-4C64-BB5A-46AB1CA955DA}|Quinnlytics.csproj|f:\\projects\\quinnlytics\\mauiprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BFA2B1BC-DA11-4C64-BB5A-46AB1CA955DA}|Quinnlytics.csproj|solutionrelative:mauiprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "DatabaseService.cs",
+              "DocumentMoniker": "F:\\Projects\\Quinnlytics\\Services\\DatabaseService.cs",
+              "RelativeDocumentMoniker": "Services\\DatabaseService.cs",
+              "ToolTip": "F:\\Projects\\Quinnlytics\\Services\\DatabaseService.cs",
+              "RelativeToolTip": "Services\\DatabaseService.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAqAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-02T07:52:33.274Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "RiotApiService.cs",
+              "DocumentMoniker": "F:\\Projects\\Quinnlytics\\Services\\RiotApiService.cs",
+              "RelativeDocumentMoniker": "Services\\RiotApiService.cs",
+              "ToolTip": "F:\\Projects\\Quinnlytics\\Services\\RiotApiService.cs",
+              "RelativeToolTip": "Services\\RiotApiService.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-02T07:52:31.461Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "IRiotApiService.cs",
+              "DocumentMoniker": "F:\\Projects\\Quinnlytics\\Services\\IRiotApiService.cs",
+              "RelativeDocumentMoniker": "Services\\IRiotApiService.cs",
+              "ToolTip": "F:\\Projects\\Quinnlytics\\Services\\IRiotApiService.cs",
+              "RelativeToolTip": "Services\\IRiotApiService.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-02T07:46:19.268Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "IDatabaseService.cs",
+              "DocumentMoniker": "F:\\Projects\\Quinnlytics\\Services\\IDatabaseService.cs",
+              "RelativeDocumentMoniker": "Services\\IDatabaseService.cs",
+              "ToolTip": "F:\\Projects\\Quinnlytics\\Services\\IDatabaseService.cs",
+              "RelativeToolTip": "Services\\IDatabaseService.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-02T07:46:18.669Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MauiProgram.cs",
+              "DocumentMoniker": "F:\\Projects\\Quinnlytics\\MauiProgram.cs",
+              "RelativeDocumentMoniker": "MauiProgram.cs",
+              "ToolTip": "F:\\Projects\\Quinnlytics\\MauiProgram.cs",
+              "RelativeToolTip": "MauiProgram.cs",
+              "ViewState": "AQIAAAsAAAAAAAAAAAAQwCkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-02T07:41:26.641Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
