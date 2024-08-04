@@ -9,6 +9,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ShellContent ContentTemplate="{DataTemplate views:MainPage}" Route="MainPage" />
-    <ShellContent ContentTemplate="{DataTemplate views:ConfigurationPage}" Route="ConfigurationPage" />
+    <ShellContent ContentTemplate="{DataTemplate views:AddPlayerPage}" Route="AddPlayerPage" />
 
 </Shell>

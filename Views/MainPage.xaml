@@ -1,203 +1,139 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-
 <ContentPage
     x:Class="Quinnlytics.Views.MainPage"
     x:DataType="vm:MainViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:m="clr-namespace:Quinnlytics.Models"
     xmlns:vm="clr-namespace:Quinnlytics.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <Grid>
+    <Grid Padding="30">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
+        <Label
+            FontAttributes="Bold"
+            FontSize="24"
+            Grid.Column="0"
+            Grid.Row="0"
+            HorizontalOptions="Center"
+            Text="{Binding GameVersion}"
+            TextColor="Black"
+            VerticalOptions="Center" />
 
-        <ScrollView Grid.Column="0" Padding="30">
+        <ScrollView Grid.Row="1">
             <VerticalStackLayout
                 HorizontalOptions="Center"
                 Spacing="30"
-                VerticalOptions="Center">
+                VerticalOptions="Start">
 
-                <!--  Numer wersji gry  -->
-                <Label
-                    FontAttributes="Bold"
-                    FontSize="36"
-                    HorizontalOptions="Center"
-                    Margin="0,0,0,30"
-                    Text="{Binding GameVersion}"
-                    VerticalOptions="Start" />
+                <CollectionView
+                    EmptyView="No players available. Add a player using the button below."
+                    ItemsSource="{Binding Players}"
+                    SelectionMode="None">
 
-                <!--  Karta dla pierwszego gracza  -->
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell x:DataType="vm:PlayerViewModel">
+                                <Frame
+                                    BackgroundColor="DimGrey"
+                                    CornerRadius="15"
+                                    HasShadow="True"
+                                    Padding="20"
+                                    VerticalOptions="Start"
+                                    WidthRequest="600">
+                                    <Grid
+                                        ColumnDefinitions="Auto,*,Auto"
+                                        Padding="15"
+                                        RowDefinitions="Auto,Auto,Auto,Auto">
+
+                                        <Label
+                                            FontAttributes="Bold"
+                                            FontSize="24"
+                                            Grid.Column="0"
+                                            Grid.Row="0"
+                                            HorizontalOptions="Start"
+                                            LineBreakMode="TailTruncation"
+                                            Margin="0,0,0,10"
+                                            MaximumWidthRequest="400"
+                                            Text="{Binding GameName}"
+                                            TextColor="Red"
+                                            VerticalOptions="Center" />
+
+                                        <Label
+                                            FontSize="20"
+                                            Grid.Column="1"
+                                            Grid.Row="1"
+                                            HorizontalOptions="Start"
+                                            LineBreakMode="TailTruncation"
+                                            Margin="0,0,0,10"
+                                            MaximumWidthRequest="400"
+                                            Text="{Binding TagLine}"
+                                            VerticalOptions="Center" />
+
+                                        <Label
+                                            FontSize="20"
+                                            Grid.Column="1"
+                                            Grid.Row="2"
+                                            HorizontalOptions="Start"
+                                            LineBreakMode="TailTruncation"
+                                            Margin="0,0,0,10"
+                                            MaximumWidthRequest="400"
+                                            Text="PlayerUniqueId"
+                                            VerticalOptions="Center" />
+
+                                        <Label
+                                            FontSize="20"
+                                            Grid.Column="1"
+                                            Grid.Row="3"
+                                            HorizontalOptions="Start"
+                                            LineBreakMode="TailTruncation"
+                                            Margin="0,0,0,0"
+                                            MaximumWidthRequest="400"
+                                            Text="EUROPE WEST"
+                                            VerticalOptions="Center" />
+                                    </Grid>
+                                </Frame>
+                            </ViewCell>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!--  Add Player Frame  -->
                 <Frame
-                    BackgroundColor="DimGrey"
+                    BackgroundColor="LightGrey"
                     CornerRadius="15"
                     HasShadow="True"
+                    HeightRequest="150"
                     Padding="20"
                     VerticalOptions="Start"
                     WidthRequest="600">
-                    <Grid
-                        ColumnDefinitions="Auto,*,Auto"
-                        Padding="15"
-                        RowDefinitions="Auto,Auto,Auto,Auto">
-                        <!--  Avatar  -->
-                        <Image
-                            Aspect="AspectFill"
-                            Grid.Column="0"
-                            Grid.Row="0"
-                            Grid.RowSpan="4"
-                            HeightRequest="150"
-                            HorizontalOptions="Center"
-                            Margin="0,0,15,0"
-                            Source="avatar_placeholder.png"
-                            VerticalOptions="Center"
-                            WidthRequest="150" />
+                    <VerticalStackLayout
+                        HorizontalOptions="Center"
+                        Spacing="20"
+                        VerticalOptions="Center">
 
-                        <!--  Nick  -->
                         <Label
                             FontAttributes="Bold"
                             FontSize="24"
-                            Grid.Column="1"
-                            Grid.Row="0"
-                            HorizontalOptions="Start"
-                            LineBreakMode="TailTruncation"
-                            Margin="0,0,0,10"
-                            MaximumWidthRequest="400"
-                            Text="{Binding PlayerNick}"
-                            VerticalOptions="Center" />
-
-                        <!--  Level  -->
-                        <Label
-                            FontSize="20"
-                            Grid.Column="1"
-                            Grid.Row="1"
-                            HorizontalOptions="Start"
-                            LineBreakMode="TailTruncation"
-                            Margin="0,0,0,10"
-                            MaximumWidthRequest="400"
-                            Text="{Binding PlayerLevel}"
-                            VerticalOptions="Center" />
-
-                        <!--  Ranga  -->
-                        <Label
-                            FontSize="20"
-                            Grid.Column="1"
-                            Grid.Row="2"
-                            HorizontalOptions="Start"
-                            LineBreakMode="TailTruncation"
-                            Margin="0,0,0,10"
-                            MaximumWidthRequest="400"
-                            Text="{Binding PlayerRank}"
-                            VerticalOptions="Center" />
-
-                        <!--  Punkty  -->
-                        <Label
-                            FontSize="20"
-                            Grid.Column="1"
-                            Grid.Row="3"
-                            HorizontalOptions="Start"
-                            LineBreakMode="TailTruncation"
-                            Margin="0,0,0,0"
-                            MaximumWidthRequest="400"
-                            Text="{Binding PlayerPoints}"
-                            VerticalOptions="Center" />
-                    </Grid>
-                </Frame>
-
-                <!--  Karta dla drugiego gracza  -->
-                <Frame
-                    BackgroundColor="DimGrey"
-                    CornerRadius="15"
-                    HasShadow="True"
-                    Padding="20"
-                    VerticalOptions="Start"
-                    WidthRequest="600">
-                    <Grid
-                        ColumnDefinitions="Auto,*,Auto"
-                        Padding="15"
-                        RowDefinitions="Auto,Auto,Auto,Auto">
-                        <!--  Avatar  -->
-                        <Image
-                            Aspect="AspectFill"
-                            Grid.Column="0"
-                            Grid.Row="0"
-                            Grid.RowSpan="4"
-                            HeightRequest="150"
                             HorizontalOptions="Center"
-                            Margin="0,0,15,0"
-                            Source="avatar_placeholder.png"
-                            VerticalOptions="Center"
+                            Text="Add a New Player" />
+
+                        <Button
+                            Command="{Binding NavigateToAddPlayerPageCommand}"
+                            HorizontalOptions="Center"
+                            Text="Add Player"
                             WidthRequest="150" />
-
-                        <!--  Nick  -->
-                        <Label
-                            FontAttributes="Bold"
-                            FontSize="24"
-                            Grid.Column="1"
-                            Grid.Row="0"
-                            HorizontalOptions="Start"
-                            LineBreakMode="TailTruncation"
-                            Margin="0,0,0,10"
-                            MaximumWidthRequest="400"
-                            Text="{Binding SecondPlayerNick}"
-                            VerticalOptions="Center" />
-
-                        <!--  Level  -->
-                        <Label
-                            FontSize="20"
-                            Grid.Column="1"
-                            Grid.Row="1"
-                            HorizontalOptions="Start"
-                            LineBreakMode="TailTruncation"
-                            Margin="0,0,0,10"
-                            MaximumWidthRequest="400"
-                            Text="{Binding SecondPlayerLevel}"
-                            VerticalOptions="Center" />
-
-                        <!--  Ranga  -->
-                        <Label
-                            FontSize="20"
-                            Grid.Column="1"
-                            Grid.Row="2"
-                            HorizontalOptions="Start"
-                            LineBreakMode="TailTruncation"
-                            Margin="0,0,0,10"
-                            MaximumWidthRequest="400"
-                            Text="{Binding SecondPlayerRank}"
-                            VerticalOptions="Center" />
-
-                        <!--  Punkty  -->
-                        <Label
-                            FontSize="20"
-                            Grid.Column="1"
-                            Grid.Row="3"
-                            HorizontalOptions="Start"
-                            LineBreakMode="TailTruncation"
-                            Margin="0,0,0,0"
-                            MaximumWidthRequest="400"
-                            Text="{Binding SecondPlayerPoints}"
-                            VerticalOptions="Center" />
-                    </Grid>
+                    </VerticalStackLayout>
                 </Frame>
 
             </VerticalStackLayout>
         </ScrollView>
-
-        <Button
-            Command="{Binding ConfigButtonClickedCommand}"
-            Grid.Column="1"
-            Grid.Row="1"
-            HorizontalOptions="End"
-            Margin="20"
-            Text="Config"
-            VerticalOptions="End" />
-
     </Grid>
 
 </ContentPage>

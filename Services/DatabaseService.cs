@@ -7,28 +7,19 @@ namespace Quinnlytics.Services;
 public class DatabaseService : IDatabaseService
 {
     private readonly AppDbContext _context;
+    private readonly IGameVersionService _gameVersionService;
     
-    public DatabaseService(AppDbContext context)
+    public DatabaseService(AppDbContext context, IGameVersionService gameVersionService)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
+        _gameVersionService = gameVersionService ?? throw new ArgumentException(nameof(gameVersionService));
         _context.Database.EnsureCreated();
     }
     
-    public async Task<GameVersion> GetCurrentGameVersionAsync()
+    public async Task<GameVersionInfo> GetCurrentGameVersionAsync()
     {
-        return await _context.GameVersions.FirstOrDefaultAsync();
-    }
-
-    public async Task AddGameVersionAsync(GameVersion gameVersion)
-    {
-        _context.GameVersions.Add(gameVersion);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task UpdateGameVersionAsync(GameVersion gameVersion)
-    {
-        _context.GameVersions.Update(gameVersion);
-        await _context.SaveChangesAsync();
+        var gameVersion = await _gameVersionService.LoadGameVersionAsync();
+        return new GameVersionInfo { Version = gameVersion };
     }
 
     public async Task SaveMatchAsync(Match match)
@@ -61,7 +52,13 @@ public class DatabaseService : IDatabaseService
 
         try
         {
-            return await _context.Items.FindAsync(id) ?? throw new InvalidOperationException();
+            var item = await _context.Items.FindAsync(id);
+            return item;
+        }
+        catch (DbUpdateException dbEx)
+        {
+            // Obsłuż specyficzne wyjątki związane z operacjami bazy danych
+            throw new InvalidOperationException($"Database update operation failed for item with ID {id}.", dbEx);
         }
         catch (Exception ex) when (ex is InvalidOperationException or DbUpdateException)
         {
@@ -194,5 +191,26 @@ public class DatabaseService : IDatabaseService
         return await _context.Items
             .Where(i => itemIds.Contains(i.Id))
             .ToDictionaryAsync(i => i.Id);
+    }
+
+    public IEnumerable<Player> GetPlayers()
+    {
+        return _context.Players.ToList();
+    }
+
+    public async Task SavePlayerAsync(Player player)
+    {
+        var existingPlayer = _context.Players
+            .FirstOrDefault(p => p.UniquePlayerId == player.UniquePlayerId);
+        
+        if (existingPlayer == null)
+        {
+            _context.Players.Add(player);
+        }
+        else
+        {
+            _context.Players.Update(player);
+        }
+        await _context.SaveChangesAsync();
     }
 }

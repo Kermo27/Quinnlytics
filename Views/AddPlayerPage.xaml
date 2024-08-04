@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="Quinnlytics.Views.AddPlayerPage"
+    x:DataType="vm:AddPlayerViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:vm="clr-namespace:Quinnlytics.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <ScrollView Padding="30">
+        <VerticalStackLayout Spacing="20">
+            <Label
+                FontAttributes="Bold"
+                FontSize="24"
+                HorizontalOptions="Center"
+                Text="Add a New Player" />
+
+            <Entry Placeholder="Game Name" Text="{Binding GameName}" />
+
+            <Entry Placeholder="Tag Line" Text="{Binding TagLine}" />
+
+            <Button
+                Command="{Binding SavePlayerCommand}"
+                HorizontalOptions="Center"
+                Text="Save Player"
+                WidthRequest="150" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

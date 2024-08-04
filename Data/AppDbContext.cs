@@ -7,7 +7,7 @@ public class AppDbContext : DbContext
 {
     public DbSet<Match> Matches { get; set; }
     public DbSet<Item> Items { get; set; }
-    public DbSet<GameVersion> GameVersions { get; set; }
+    public DbSet<Player> Players { get; set; }
 
     public AppDbContext()
         : base() { }
@@ -21,5 +21,17 @@ public class AppDbContext : DbContext
         {
             optionsBuilder.UseSqlite("Data Source=quinnlytics.db");
         }
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Player>(entity =>
+        {
+            entity.HasKey(p => p.Id);
+            entity.Property(p => p.GameName).IsRequired();
+            entity.Property(p => p.TagLine).IsRequired();
+        });
     }
 }

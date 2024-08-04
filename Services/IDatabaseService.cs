@@ -4,9 +4,7 @@ namespace Quinnlytics.Services;
 
 public interface IDatabaseService
 {
-    Task<GameVersion> GetCurrentGameVersionAsync();
-    Task AddGameVersionAsync(GameVersion gameVersion);
-    Task UpdateGameVersionAsync(GameVersion gameVersion);
+    Task<GameVersionInfo> GetCurrentGameVersionAsync();
     Task SaveMatchAsync(Match match);
     Task SaveNewItemsAsync(List<Item> itemsToSave);
     Task UpdateItemsAsync(Item updatedItem);
@@ -19,4 +17,6 @@ public interface IDatabaseService
     Task<Dictionary<string, Dictionary<int, string>>> GetMostPopularItemsByRoleAndSlotAsync(string gameVersion);
     List<string> ParseBuild(string buildString);
     Task<Dictionary<int, Item>> GetItemsByIdsAsync(IEnumerable<int> itemIds);
+    IEnumerable<Player> GetPlayers();
+    Task SavePlayerAsync(Player player);
 }

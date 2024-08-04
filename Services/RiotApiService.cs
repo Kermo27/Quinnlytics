@@ -1,6 +1,5 @@
 ﻿using Camille.Enums;
 using Camille.RiotGames;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Quinnlytics.Models;
@@ -11,30 +10,26 @@ public class RiotApiService : IRiotApiService
 {
     private const RegionalRoute Region = RegionalRoute.EUROPE;
     private readonly RiotGamesApi _riotGamesApi;
-    private static readonly HttpClient _httpClient = new HttpClient();
-    private readonly DatabaseService _databaseService;
+    private readonly HttpClient _httpClient;
+    private readonly IDatabaseService _databaseService;
+    private readonly IGameVersionService _gameVersionService;
     private readonly string _apiKey;
-    private string? _currentGameVersionLong;
+    private string? _currentGameVersion;
 
-    public RiotApiService(DatabaseService databaseService)
+    public RiotApiService(IDatabaseService databaseService, IHttpClientFactory httpClientFactory, IGameVersionService gameVersionService)
     {
         _apiKey = "RGAPI-24bffdb3-2ad7-4c70-8b38-e2e2c2ac44d2";
         _riotGamesApi = RiotGamesApi.NewInstance(_apiKey);
         _databaseService = databaseService ?? throw new ArgumentException(nameof(databaseService));
-    }
-
-    public async Task InitializeAsync()
-    {
-        _currentGameVersionLong = await GetCurrentGameVersionLongAsync();
+        _httpClient = httpClientFactory.CreateClient("RiotApiClient");
+        _gameVersionService = gameVersionService;
     }
 
     public async Task<string> GetCurrentGameVersionLongAsync()
     {
         try
         {
-            var response = await _httpClient
-                .GetStringAsync("https://ddragon.leagueoflegends.com/api/versions.json")
-                .ConfigureAwait(false);
+            var response = await _httpClient.GetStringAsync("api/versions.json");
             var versions = JsonConvert.DeserializeObject<string[]>(response);
 
             if (versions == null || versions.Length == 0)
@@ -44,14 +39,6 @@ public class RiotApiService : IRiotApiService
 
             return versions[0];
         }
-        catch (HttpRequestException ex)
-        {
-            throw new Exception($"HTTP request failed: {ex.Message}");
-        }
-        catch (JsonReaderException ex)
-        {
-            throw new Exception($"JSON deserialization failed: {ex.Message}");
-        }
         catch (Exception ex)
         {
             throw new Exception($"An error occurred: {ex.Message}");
@@ -60,44 +47,26 @@ public class RiotApiService : IRiotApiService
 
     public async Task<string> GetCurrentGameVersionShortAsync()
     {
-        try
+        if (_currentGameVersion == null)
         {
-            var response = await _httpClient
-                .GetStringAsync("https://ddragon.leagueoflegends.com/api/versions.json")
-                .ConfigureAwait(false);
-            var versions = JsonConvert.DeserializeObject<string[]>(response);
-
-            if (versions == null || versions.Length == 0)
-            {
-                throw new Exception("No versions found");
-            }
-
-            var shortVersion = string.Join(".", versions[0].Split('.').Take(2));
-            return shortVersion;
+            _currentGameVersion = await GetCurrentGameVersionLongAsync();
         }
-        catch (HttpRequestException ex)
-        {
-            throw new Exception($"HTTP request failed: {ex.Message}");
-        }
-        catch (JsonReaderException ex)
-        {
-            throw new Exception($"JSON deserialization failed: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"An error occurred: {ex.Message}");
-        }
+        
+        var shortVersion = string.Join(".", _currentGameVersion.Split('.').Take(2));
+        
+        return shortVersion;
     }
 
     public async Task<Dictionary<int, Rune>> GetRunesReforgedAsync()
     {
         try
         {
-            var response = await _httpClient
-                .GetStringAsync(
-                    $"https://ddragon.leagueoflegends.com/cdn/{_currentGameVersionLong}/data/en_US/runesReforged.json"
-                )
-                .ConfigureAwait(false);
+            if (_currentGameVersion == null)
+            {
+                _currentGameVersion = await GetCurrentGameVersionLongAsync();
+            }
+            
+            var response = await _httpClient.GetStringAsync($"cdn/{_currentGameVersion}/data/en_US/runesReforged.json");
             var runes = JsonConvert.DeserializeObject<List<Rune>>(response);
 
             if (runes == null || runes.Count == 0)
@@ -106,14 +75,6 @@ public class RiotApiService : IRiotApiService
             }
 
             return runes.SelectMany(r => r.Slots.SelectMany(s => s.Runes)).ToDictionary(r => r.Id);
-        }
-        catch (HttpRequestException ex)
-        {
-            throw new Exception($"HTTP request failed: {ex.Message}");
-        }
-        catch (JsonReaderException ex)
-        {
-            throw new Exception($"JSON deserialization failed: {ex.Message}");
         }
         catch (Exception ex)
         {
@@ -158,7 +119,7 @@ public class RiotApiService : IRiotApiService
             throw new ArgumentException("Player not found in the match.");
         }
 
-        var endGameItems = new List<int>
+        var endGameItemsId = new List<int>
         {
             player.Item0,
             player.Item1,
@@ -168,11 +129,11 @@ public class RiotApiService : IRiotApiService
             player.Item5
         };
 
-        var itemIds = purchases.Concat(endGameItems).Distinct().ToList();
+        var itemIds = purchases.Concat(endGameItemsId).Distinct().ToList();
         var items = await _databaseService.GetItemsByIdsAsync(itemIds);
 
         var build = purchases
-            .Where(endGameItems.Contains)
+            .Where(endGameItemsId.Contains)
             .Where(items.ContainsKey)
             .Select(itemId => items[itemId].Name)
             .Take(6)
@@ -235,10 +196,32 @@ public class RiotApiService : IRiotApiService
         return matchEntity;
     }
 
-    public async Task<string> GetSummonerPuuidAsync(string gameName, string tagLine)
+    public async Task<Player> GetPlayerFromApiAsync(RegionalRoute region, string gameName, string tagLine)
     {
-        var summoner = await _riotGamesApi.AccountV1().GetByRiotIdAsync(Region, gameName, tagLine);
-        return summoner.Puuid;
+        var summoner = await _riotGamesApi.AccountV1().GetByRiotIdAsync(region, gameName, tagLine);
+        if (summoner == null)
+        {
+            throw new ArgumentException("Summoner not found");
+        }
+        var player = new Player
+        {
+            GameName = gameName,
+            TagLine = tagLine,
+            UniquePlayerId = summoner.Puuid,
+            RegionPlayer = "EUW"
+        };
+        
+        return player;
+    }
+
+    public async Task SavePlayerToDatabaseAsync(Player player)
+    {
+        await _databaseService.SavePlayerAsync(player);
+    }
+
+    public IEnumerable<Player> GetSavedPlayers()
+    {
+        return _databaseService.GetPlayers();
     }
 
     public async Task<List<string>> GetMatchIdsByPuuidAsync(string playerUniqueId, int count = 10)
@@ -266,11 +249,13 @@ public class RiotApiService : IRiotApiService
 
     public async Task FetchItemsAsync(HashSet<int> excludedItems, HashSet<int> exceptions)
     {
-        var response = await _httpClient
-            .GetStringAsync(
-                $"https://ddragon.leagueoflegends.com/cdn/{_currentGameVersionLong}/data/en_US/item.json"
-            )
-            .ConfigureAwait(false);
+        if (_currentGameVersion == null)
+        {
+            _currentGameVersion = await GetCurrentGameVersionLongAsync();
+        }
+        
+        var response = await _httpClient.GetStringAsync($"cdn/{_currentGameVersion}/data/en_US/item.json");
+        
         var itemData = JsonConvert.DeserializeObject<JObject>(response);
 
         var itemsToSave = new List<Item>();
@@ -302,7 +287,7 @@ public class RiotApiService : IRiotApiService
             }
         }
 
-        if (itemsToSave.Any())
+        if (itemsToSave.Count != 0)
         {
             await _databaseService.SaveNewItemsAsync(itemsToSave);
         }
@@ -313,21 +298,13 @@ public class RiotApiService : IRiotApiService
         HashSet<int> exceptions
     )
     {
-        var currentVersion = await GetCurrentGameVersionLongAsync();
-        var gameVersionInDatabase = await _databaseService.GetCurrentGameVersionAsync();
+        _currentGameVersion = await GetCurrentGameVersionLongAsync();
 
-        if (gameVersionInDatabase == null || gameVersionInDatabase.Version != currentVersion)
+        var gameVersionInFile = await _gameVersionService.LoadGameVersionAsync();
+
+        if (gameVersionInFile != _currentGameVersion)
         {
-            if (gameVersionInDatabase == null)
-            {
-                gameVersionInDatabase = new GameVersion { Version = currentVersion };
-                await _databaseService.AddGameVersionAsync(gameVersionInDatabase);
-            }
-            else
-            {
-                gameVersionInDatabase.Version = currentVersion;
-                await _databaseService.UpdateGameVersionAsync(gameVersionInDatabase);
-            }
+            await _gameVersionService.UpdateGameVersionAsync(_currentGameVersion);
             
             await FetchItemsAsync(excludedItems, exceptions);
         }

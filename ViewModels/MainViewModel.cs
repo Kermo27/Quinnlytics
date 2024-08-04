@@ -1,5 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using Camille.Enums;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Quinnlytics.Models;
 using Quinnlytics.Services;
 using Quinnlytics.Views;
 
@@ -11,15 +15,7 @@ public partial class MainViewModel : ObservableObject
     
     [ObservableProperty] private string _gameVersion = "???";
     
-    // Informations about player
-    [ObservableProperty] private string _playerNick = "Kermo#Asuna";
-    [ObservableProperty] private string _playerLevel = "69";
-    [ObservableProperty] private string _playerRank = "Diamond III";
-    [ObservableProperty] private string _playerPoints = "67";
-    [ObservableProperty] private string _secondPlayerNick = "Asuna#Kermo";
-    [ObservableProperty] private string _secondPlayerLevel = "96";
-    [ObservableProperty] private string _secondPlayerRank = "Platinum III";
-    [ObservableProperty] private string _secondPlayerPoints = "12";
+    [ObservableProperty] private ObservableCollection<PlayerViewModel> _players = new ObservableCollection<PlayerViewModel>(); 
 
     public MainViewModel(IRiotApiService riotApiService)
     {
@@ -28,20 +24,31 @@ public partial class MainViewModel : ObservableObject
     
     public async Task InitializeAsync()
     {
+        await _riotApiService.RefreshItemsIfVersionChangedAsync(RiotConstants.ItemExceptions, RiotConstants.ExcludedItems);
         GameVersion = await _riotApiService.GetCurrentGameVersionShortAsync();
-        PlayerNick = "Кермо#AIBOT";
-        PlayerLevel = "Level 69";
-        PlayerRank = "Diamond III";
-        PlayerPoints = "67 LP";
-        SecondPlayerNick = "Asuna#Kermo";
-        SecondPlayerLevel = "Level 96";
-        SecondPlayerRank = "Platinum III";
-        SecondPlayerPoints = "12 LP";
+
+        LoadSavedPlayers();
+        Debug.WriteLine($"InitializeAsync: Players.Count = {Players.Count}");
     }
 
-    [RelayCommand]
-    private async Task ConfigButtonClicked()
+    private void LoadSavedPlayers()
     {
-        await Shell.Current.GoToAsync(nameof(ConfigurationPage));
+        var savedPlayers = _riotApiService.GetSavedPlayers();
+        
+        Debug.WriteLine($"LoadSavedPlayers: loaded {savedPlayers.Count()} players");
+        Players.Clear();
+        foreach (var player in savedPlayers)
+        {
+            Players.Add(new PlayerViewModel(player));
+        }
+        Debug.WriteLine($"LoadSavedPlayers: added {Players.Count} players to collection");
+        OnPropertyChanged(nameof(Players));
+    }
+
+
+    [RelayCommand]
+    private async Task NavigateToAddPlayerPageAsync()
+    {
+        await Shell.Current.GoToAsync(nameof(AddPlayerPage));
     }
 }

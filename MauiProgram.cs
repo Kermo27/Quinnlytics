@@ -5,6 +5,7 @@ using Quinnlytics.Data;
 using Quinnlytics.Services;
 using Quinnlytics.ViewModels;
 using Quinnlytics.Views;
+using Microsoft.Extensions.Http;
 
 namespace Quinnlytics;
 
@@ -31,14 +32,23 @@ public static class MauiProgram
         );
 
         // Register Views
-        builder.Services.AddSingleton<ConfigurationPage>();
+        builder.Services.AddSingleton<MainPage>();
 
         // Register ViewModels
         builder.Services.AddSingletonWithShellRoute<MainPage, MainViewModel>(nameof(MainPage));
-
+        builder.Services.AddSingletonWithShellRoute<AddPlayerPage, AddPlayerViewModel>(nameof(AddPlayerPage));
+        builder.Services.AddSingleton<PlayerViewModel>();
+        
         // Register Services
-        builder.Services.AddScoped<IRiotApiService, RiotApiService>();
-        builder.Services.AddScoped<IDatabaseService, DatabaseService>();
+        builder.Services.AddSingleton<IRiotApiService, RiotApiService>();
+        builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
+        builder.Services.AddSingleton<IGameVersionService, GameVersionService>();
+        
+        builder.Services.AddHttpClient("RiotApiClient", client =>
+        {
+            client.BaseAddress = new Uri("https://ddragon.leagueoflegends.com/");
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
 
         return builder.Build();
     }
